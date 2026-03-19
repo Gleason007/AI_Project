@@ -12,7 +12,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# 注入自定义企业级 CSS，去除浓厚的“Streamlit原生感”和廉价的 Emoji
+
 custom_css = """
 <style>
     /* 隐藏顶部导航条和底部水印 */
@@ -126,7 +126,7 @@ else:
             )
             status.update(label="链路执行完成", state="complete", expanded=False)
             
-        # 提取结果展示，使用 JSON 增强极客感
+        # 提取结果展示
         st.write("**Agent 1 结构化输出:**")
         st.json(extracted_json)
 
@@ -144,5 +144,5 @@ else:
         st.markdown(f"<div style='padding: 10px; background: white; border-radius: 6px; border-left: 4px solid #475569;'>{status_html}<br><br><b>策略原因:</b> {route_result['reason']}</div>", unsafe_allow_html=True)
         
         st.markdown("<br><h4 style='font-size: 1em; color: #334155;'>拟定安抚话术输出</h4>", unsafe_allow_html=True)
-        # 用清爽的对话框替代机器人 emoji
+        # 用清爽的对话框
         st.info(response_text)
