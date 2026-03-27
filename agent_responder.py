@@ -1,4 +1,10 @@
 import time
+import os
+from prompt_manager import PromptManager
+from llm_client import llm_client
+
+current_dir = os.path.dirname(__file__)
+prompt_mgr = PromptManager(os.path.join(current_dir, "..", "prompts"))
 
 def generate_empathy_response(summary: str, emotion_score: int, route_action: str) -> str:
     """
@@ -14,6 +20,23 @@ def generate_empathy_response(summary: str, emotion_score: int, route_action: st
     :param route_action: 路由系统决定的下一步动作（非常重要，不能瞎承诺）
     :return: 最终对客输出的文本
     """
+    # === 新增：真实大模型 API 链路 ===
+    try:
+        if llm_client.api_available:
+            system_prompt = prompt_mgr.render_prompt(
+                "agent_responder", 
+                "v1", 
+                summary=summary,
+                emotion_score=emotion_score,
+                route_action=route_action
+            )
+            response_text = llm_client.call(system_prompt=system_prompt, user_prompt="")
+            if response_text:
+                return response_text.strip()
+    except Exception as e:
+        pass # 异常则降级
+
+    # === 原有 Mock 链路 (Fallback) ===
     time.sleep(1.5) # 模拟思考生成延迟
     
     prompt_context = f"摘要: {summary} | 情绪分数: {emotion_score} | 下一步动作: {route_action}"
